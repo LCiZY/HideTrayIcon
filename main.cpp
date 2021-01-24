@@ -29,6 +29,7 @@ int main(int argc, char* argv[]) {
 
 	//从启动参数中得到要处理的托盘含有的部分tooltip文字
 	for (int i = 2; i < argc; i++) { tip_parts.push_back(argv[i]); }
+
 	DeleteTrayIcon(FindOverflowTrayWindow());
 	//system("pause");
 	return 0;
@@ -140,14 +141,14 @@ VOID DeleteTrayIcon(HWND hWnd)
 						USES_CONVERSION;
 						CString csTips = W2A((WCHAR*)(szTips));
 						std::string tip = csTips.GetBuffer(0);
-						std::cout <<"tip:"<< tip<<" "; 
+						std::cout <<" tip:"<< tip<<" "; 
 						bool existFlag = false;
 						for (int i = 0; i < tip_parts.size(); i++)
 						{
-							if (contain(const_cast<char*>(tip.c_str()), tip_parts.at(i))) existFlag = true;
+							if (contain(const_cast<char*>(tip.c_str()), tip_parts.at(i))) { existFlag = true; break; }
 						}
 						// 如果托盘图标的szTip包含特定的信息，该图标就是我们准备清除的图标，找到并删除它
-						std::cout << "ifExist:" << existFlag<<" ";
+						std::cout << " ifExist:" << existFlag<<" ";
 						if(existFlag)
 						{
 							nid.cbSize = NOTIFYICONDATA_V2_SIZE;
@@ -157,6 +158,7 @@ VOID DeleteTrayIcon(HWND hWnd)
 							nid.uCallbackMessage = td.uCallbackMessage;
 							nid.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP;
 							::Shell_NotifyIcon(NIM_DELETE, &nid);
+							::SendMessage(hWnd, TB_HIDEBUTTON, tbButton.idCommand, MAKELONG(true, 0));
 							std::cout << "隐藏托盘图标：执行成功";
 						}
 					}
