@@ -41,12 +41,10 @@ struct TBBUTTON_1
 	 int idCommand;
 	 byte fsState;
 	 byte fsStyle;
-	//      [ MarshalAs( UnmanagedType.ByValArray, SizeConst=2 ) ]
-	//      public byte[] bReserved;
 	 byte bReserved1;
 	 byte bReserved2;
-	// public UInt32 dwData;
-	 long long dwData;
+	// public UInt32 dwData; // 32 bit
+	 long long dwData; // 64 bit
 	 int* iString;
 };
 
@@ -111,7 +109,7 @@ VOID DeleteTrayIcon(HWND hWnd)
 
 	// 查询指定窗口所含图标数，每个图标对应一个按钮
 	dwButtonCount = (DWORD)::SendMessage(hWnd, TB_BUTTONCOUNT, 0, 0);
-	std::cout <<"所含图标数："<< dwButtonCount<<"\n";
+	std::cout <<"number of icons："<< dwButtonCount<<"\n";
 	if (dwButtonCount == 0)
 		return;
 
@@ -126,7 +124,7 @@ VOID DeleteTrayIcon(HWND hWnd)
 				// 遍历所有图标并匹配目标信息，从而找到目标图标并删除之 
 				std::cout << "开始遍历所有图标\n";
 				for (DWORD i = 0; i < dwButtonCount; i++) {
-					std::cout << "[图标" << i+1 << "]  : ";
+					std::cout << "[icon " << i+1 << "]  : ";
 					bool flag1 = (SendMessage(hWnd, TB_GETBUTTON, i, (LPARAM)pTB) == TRUE);
 					bool flag2 = (::ReadProcessMemory(hProcess, pTB, &tbButton, sizeof(TBBUTTON_1), NULL) != 0);
 					std::cout << tbButton.iBitmap << " " << tbButton.idCommand << " " << tbButton.fsState << " " << tbButton.fsStyle << " " << tbButton.bReserved1 << " " << tbButton.dwData << " " << tbButton.iString << " ***";
@@ -159,12 +157,10 @@ VOID DeleteTrayIcon(HWND hWnd)
 							nid.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP;
 							::Shell_NotifyIcon(NIM_DELETE, &nid);
 							::SendMessage(hWnd, TB_HIDEBUTTON, tbButton.idCommand, MAKELONG(true, 0));
-							std::cout << "隐藏托盘图标：执行成功";
+							std::cout << "success!";
 						}
 					}
-					std::cout <<" flags:"<< flag1 << " " << flag2 << " " << flag3;
-
-					std::cout << std::endl;
+					
 				}
 				::VirtualFreeEx(hProcess, pTB, sizeof(TBBUTTON_1), MEM_FREE);
 			}
@@ -198,9 +194,6 @@ bool contain(char *s, char *p) {
 
 
 int parseInt(char* s) {
-
-	std::cout << " int：" << s;
-
 	int len = strlen(s);
 	int result = 0;
 	for (int i = 0; i < len; i++)
@@ -209,5 +202,4 @@ int parseInt(char* s) {
 		else return -1;
 	}
 	return result;
-
 }
