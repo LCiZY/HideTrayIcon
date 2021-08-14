@@ -4,7 +4,7 @@ HideTrayIcon for 64bit Windows.
 ## exe在cmd下调用方式：
 **hideTrayIcon.exe [前置时间] [托盘tooltip含有的部分文字] [...]**
 如：hideTrayIcon.exe 5 hide/show Text1 Text2
-（表示启动程序延时**5**S，***隐藏(hide)***或***显示[show]***图标，且如果托盘的提示文字中含有**Text1**或**Text2**字样，就隐藏此托盘图标，还可以有Text3 Text4等..）
+（表示启动程序延时**5**S，**隐藏(hide)**或**显示(show)**图标，且如果托盘的提示文字中含有**Text1**或**Text2**字样，就隐藏此托盘图标，还可以有Text3 Text4等..）
 
 ## 开机登陆后延时10S执行
 (1)在hideTrayIcon.exe所在目录创建一个vbs文件，输入以下内容
