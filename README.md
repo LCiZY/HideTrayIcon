@@ -5,7 +5,8 @@ Hide/Show TrayIcon for 64bit Windows.
 **hideTrayIcon.exe [前置时间] [show/hide] [托盘tooltip含有的部分文字...]**
 - example:
 ``` cmd
-hideTrayIcon.exe 5 hide/show Text1 Text2
+hideTrayIcon.exe 5 hide Text1 Text2  # hide trayicon
+hideTrayIcon.exe 5 show Text1 Text2  # show trayicon
 ```
 > 表示启动程序延时**5**S，**隐藏(hide)**或**显示(show)**图标，且如果托盘的提示文字中含有**Text1**或**Text2**字样，就隐藏此托盘图标，还可以有Text3 Text4等..
 
