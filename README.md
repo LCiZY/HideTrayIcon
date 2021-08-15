@@ -1,5 +1,5 @@
 # HideTrayIcon
-HideTrayIcon for 64bit Windows.
+Hide/Show TrayIcon for 64bit Windows.
 
 ## exe在cmd下调用方式：
 **hideTrayIcon.exe [前置时间] [托盘tooltip含有的部分文字] [...]**
