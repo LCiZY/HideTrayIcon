@@ -17,7 +17,7 @@ int main(int argc, char* argv[]) {
 	//2.解析此次操作是隐藏还是显示图标 / whether the operation is show or hide
 	bool visable = strcmp(argv[2], "show") == 0 ; // show or hide
 	//3.从启动参数中得到要处理的托盘含有的部分tooltip文字 / tooltips that split by space(could be not Integrity)
-	for (int i = 2; i < argc; i++) { tip_parts.push_back(argv[i]); }
+	for (int i = 3; i < argc; i++) { tip_parts.push_back(argv[i]); }
 	
 	SetTrayIconVisable(FindOverflowTrayWindow(), tip_parts, visable);
 	return 0;
