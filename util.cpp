@@ -1,6 +1,6 @@
 #include"util.h"
 
-struct TBBUTTON_1
+struct TBBUTTON64
 {
 	int iBitmap;
 	int idCommand;
@@ -12,14 +12,29 @@ struct TBBUTTON_1
 	int* iString;
 };
 
-HWND FindOverflowTrayWindow()
+HWND FindOverflowTrayWindow() // 图标收纳区的窗口句柄
 {
-	HWND hWnd = NULL;  // 查找NotifyIconOverflowWindow窗口
-	hWnd = ::FindWindow(_T("NotifyIconOverflowWindow"), NULL);
+	HWND hWnd = ::FindWindow(_T("NotifyIconOverflowWindow"), NULL);  // 查找NotifyIconOverflowWindow窗口
 	if (hWnd != NULL)    // 查找ToobarWindow32窗口
 		hWnd = FindWindowEx(hWnd, NULL, _T("ToolbarWindow32"), NULL);
 
 	return hWnd;
+}
+
+HWND FindNormalTrayWindow()  //任务栏的窗口句柄
+{
+	// find system tray window
+	HWND trayWnd = FindWindow(_T("Shell_TrayWnd"), NULL);
+	if (trayWnd) {
+		trayWnd = FindWindowEx(trayWnd, NULL, _T("TrayNotifyWnd"), NULL);
+		if (trayWnd) {
+			trayWnd = FindWindowEx(trayWnd, NULL, _T("SysPager"), NULL);
+			if (trayWnd) {
+				trayWnd = FindWindowEx(trayWnd, NULL, _T("ToolbarWindow32"), NULL);
+			}
+		}
+	}
+	return trayWnd;
 }
 
 VOID SetTrayIconVisable(HWND hWnd, std::vector<char*>& tip_parts ,bool visable, bool isHardDelete)
@@ -43,7 +58,7 @@ VOID SetTrayIconVisable(HWND hWnd, std::vector<char*>& tip_parts ,bool visable, 
 	DWORD dwProcessID = 0;
 	DWORD dwButtonCount = 0;
 	HANDLE hProcess = INVALID_HANDLE_VALUE;
-	TBBUTTON_1 tbButton;
+	TBBUTTON64 tbButton;
 	LPVOID pTB;
 	TRAYDATA td;
 	NOTIFYICONDATA nid;
@@ -62,14 +77,15 @@ VOID SetTrayIconVisable(HWND hWnd, std::vector<char*>& tip_parts ,bool visable, 
 		hProcess = ::OpenProcess(PROCESS_ALL_ACCESS | PROCESS_VM_OPERATION | PROCESS_VM_READ | PROCESS_VM_WRITE,
 			FALSE, dwProcessID);
 		if (hProcess != NULL) {
-			pTB = ::VirtualAllocEx(hProcess, NULL, sizeof(TBBUTTON_1), MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
+			pTB = ::VirtualAllocEx(hProcess, NULL, sizeof(TBBUTTON64), MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
 			if (pTB != NULL) {
 				// 遍历所有图标并匹配目标信息，从而找到目标图标并删除之 
 				std::cout << "开始遍历所有图标\n";
 				for (DWORD i = 0; i < dwButtonCount; i++) {
-					std::cout << "==============================================\n[图标" << i + 1 << "]  : ";
+					std::cout << "\n==================== ";
+					std::cout << "\n[图标" << i + 1 << "]  : ";
 					bool flag1 = (SendMessage(hWnd, TB_GETBUTTON, i, (LPARAM)pTB) == TRUE);
-					bool flag2 = (::ReadProcessMemory(hProcess, pTB, &tbButton, sizeof(TBBUTTON_1), NULL) != 0);
+					bool flag2 = (::ReadProcessMemory(hProcess, pTB, &tbButton, sizeof(TBBUTTON64), NULL) != 0);
 					printf("iBitmap:%d\tidCommand:%d\tfsState:%d\tfsStyle:%d\tbReserved1:%d\tdwData:%I64d\tiString:%d\s\n",
 						tbButton.iBitmap , tbButton.idCommand , tbButton.fsState , tbButton.fsStyle , tbButton.bReserved1 , tbButton.dwData , tbButton.iString );
 					bool flag3 = (::ReadProcessMemory(hProcess, LPVOID(tbButton.dwData), &td, sizeof(TRAYDATA), NULL) != 0);
@@ -108,7 +124,7 @@ VOID SetTrayIconVisable(HWND hWnd, std::vector<char*>& tip_parts ,bool visable, 
 
 					std::cout << std::endl;
 				}
-				::VirtualFreeEx(hProcess, pTB, sizeof(TBBUTTON_1), MEM_FREE);
+				::VirtualFreeEx(hProcess, pTB, sizeof(TBBUTTON64), MEM_FREE);
 			}
 			::CloseHandle(hProcess);
 		}

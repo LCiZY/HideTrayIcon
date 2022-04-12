@@ -20,19 +20,24 @@ int main(int argc, char* argv[]) {
 	for (int i = 3; i < argc; i++) { tip_parts.push_back(argv[i]); }
 	
 	SetTrayIconVisable(FindOverflowTrayWindow(), tip_parts, visable);
+	SetTrayIconVisable(FindNormalTrayWindow(),   tip_parts, visable, true);
+
 	return 0;
 }
 
 
-///// for test
+///////// ---for test---
 //int main() {
+//	bool visable = false;
+//
 //	 char c[] = "ShareOnLan";
 //	 char c1[] = "Quick";
 //	 char c2[] = "Ditto";
 //	tip_parts.push_back(c);
 //	tip_parts.push_back(c1);
 //	tip_parts.push_back(c2);
-//	SetTrayIconVisable(FindOverflowTrayWindow(), tip_parts, true);
+//	SetTrayIconVisable(FindOverflowTrayWindow(), tip_parts, visable);
+//	SetTrayIconVisable(FindNormalTrayWindow(), tip_parts, visable, true);
 //	fflush(stdout);
 //	system("pause");
 //}

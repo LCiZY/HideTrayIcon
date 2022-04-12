@@ -19,6 +19,7 @@ int parseInt(char* s);
 
 // 得到托盘窗口句柄
 HWND FindOverflowTrayWindow();
+HWND FindNormalTrayWindow();
 // 设置任务栏中图标的可见状态
 VOID SetTrayIconVisable(HWND hWnd, std::vector<char*>& tip_parts, bool visable, bool isHardDelete = false);
 
