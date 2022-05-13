@@ -15,7 +15,7 @@
 
 bool contain(char *s, char *p);
 int parseInt(char* s);
-
+std::string ProcessIdToName(DWORD processId);
 
 // µÃµ½ÍÐÅÌ´°¿Ú¾ä±ú
 HWND FindOverflowTrayWindow();

@@ -12,6 +12,18 @@ struct TBBUTTON64
 	int* iString;
 };
 
+struct TRAYDATA
+{
+	HWND hWnd;
+	UINT uID;
+	UINT uCallbackMessage;
+	DWORD Reserved1[2];
+	HICON hIcon;
+	DWORD Reserved2[3];
+	TCHAR szExePath[MAX_PATH];
+	TCHAR szTip[128];
+};
+
 HWND FindOverflowTrayWindow() // 图标收纳区的窗口句柄
 {
 	HWND hWnd = ::FindWindow(_T("NotifyIconOverflowWindow"), NULL);  // 查找NotifyIconOverflowWindow窗口
@@ -37,23 +49,10 @@ HWND FindNormalTrayWindow()  //任务栏的窗口句柄
 	return trayWnd;
 }
 
-VOID SetTrayIconVisable(HWND hWnd, std::vector<char*>& tip_parts ,bool visable, bool isHardDelete)
+VOID SetTrayIconVisable(HWND hWnd, std::vector<char*>& tip_parts ,bool visible, bool isHardDelete)
 {
 	if (hWnd == NULL)
 		return;
-
-	struct TRAYDATA
-	{
-		HWND hWnd;
-		UINT uID;
-		UINT uCallbackMessage;
-		DWORD Reserved1[2];
-		HICON hIcon;
-		DWORD Reserved2[3];
-		TCHAR szExePath[MAX_PATH];
-		TCHAR szTip[128];
-	};
-
 
 	DWORD dwProcessID = 0;
 	DWORD dwButtonCount = 0;
@@ -67,7 +66,7 @@ VOID SetTrayIconVisable(HWND hWnd, std::vector<char*>& tip_parts ,bool visable, 
 
 	// 查询指定窗口所含图标数，每个图标对应一个按钮
 	dwButtonCount = (DWORD)::SendMessage(hWnd, TB_BUTTONCOUNT, 0, 0);
-	std::cout << "所含图标数：" << dwButtonCount << "\n";
+	printf("\n==================== \nSetTrayIconVisable Start.\n句柄：%x 所含图标数：%d,", hWnd, dwButtonCount);
 	if (dwButtonCount == 0)
 		return;
 
@@ -82,31 +81,42 @@ VOID SetTrayIconVisable(HWND hWnd, std::vector<char*>& tip_parts ,bool visable, 
 				// 遍历所有图标并匹配目标信息，从而找到目标图标并删除之 
 				std::cout << "开始遍历所有图标\n";
 				for (DWORD i = 0; i < dwButtonCount; i++) {
-					std::cout << "\n==================== ";
-					std::cout << "\n[图标" << i + 1 << "]  : ";
+					printf("\n====================\n[图标%d]: ", i + 1);
 					bool flag1 = (SendMessage(hWnd, TB_GETBUTTON, i, (LPARAM)pTB) == TRUE);
 					bool flag2 = (::ReadProcessMemory(hProcess, pTB, &tbButton, sizeof(TBBUTTON64), NULL) != 0);
-					printf("iBitmap:%d\tidCommand:%d\tfsState:%d\tfsStyle:%d\tbReserved1:%d\tdwData:%I64d\tiString:%d\s\n",
+					printf("iBitmap:%d\tidCommand:%d\tfsState:%d\tfsStyle:%d\tbReserved1:%d\tdwData:%I64d\tiString:%d\s",
 						tbButton.iBitmap , tbButton.idCommand , tbButton.fsState , tbButton.fsStyle , tbButton.bReserved1 , tbButton.dwData , tbButton.iString );
 					bool flag3 = (::ReadProcessMemory(hProcess, LPVOID(tbButton.dwData), &td, sizeof(TRAYDATA), NULL) != 0);
-					if(GetLastError() != 0) std::cout << "ERROR:" << GetLastError() << "\t";
-					std::cout << "uid:" << td.uID << "\thwnd:" << td.hWnd << "\thIcon:" << td.hIcon;
-					if (flag1&&flag2 && flag3) {
+					if (GetLastError() != 0)  printf("\tERROR：%d", GetLastError());
+					printf("\tuid:%d\thwnd:%x\thIcon:%x\tflag1:%i,flag2:%i,flag3:%i", td.uID, td.hWnd, td.hIcon, flag1, flag2, flag3);
+					if (flag1 && flag2 && flag3) {
+
 						TCHAR szTips[1024];
 						::ReadProcessMemory(hProcess, (LPVOID)tbButton.iString, szTips, 1024, NULL);
 						//szTips是Unicode字符串，需要转换
 						USES_CONVERSION;
 						CString csTips = W2A((WCHAR*)(szTips));
 						std::string tip = csTips.GetBuffer(0);
-						std::cout << "\ttooltip text:" << tip;
+						printf("\ttooltip_text:[%s]", tip.c_str());
+
+						DWORD trayIconProcessId = 0;
+						GetWindowThreadProcessId(td.hWnd, &trayIconProcessId);
+						std::string pro_name = ProcessIdToName(trayIconProcessId);
+						printf("\tprocess_name:[%s]", pro_name.c_str());
+
 						bool existFlag = false;
 						for (int i = 0; i < tip_parts.size(); i++){
-							if (contain(const_cast<char*>(tip.c_str()), tip_parts.at(i))) { existFlag = true; break; }
+							if (contain(const_cast<char*>(tip.c_str()), tip_parts.at(i)) || 
+								contain(const_cast<char*>(pro_name.c_str()), tip_parts.at(i))) {
+								existFlag = true; 
+								break; 
+							}
 						}
-						// 如果托盘图标的szTip包含特定的信息，该图标就是我们准备清除的图标，找到并删除它
+
+						// 如果 托盘图标的szTip 或 托盘图标所属进程名 包含特定的信息，该图标就是我们准备清除的图标，找到并 删除/隐藏 它
 						std::cout << "\tis target:" << existFlag ;
 						if (existFlag){
-							if (isHardDelete && !visable) { //硬删除，不可恢复
+							if (isHardDelete && !visible) { //硬删除，不可恢复
 								nid.cbSize = NOTIFYICONDATA_V2_SIZE;
 								nid.uID = td.uID;
 								nid.hWnd = td.hWnd;
@@ -115,14 +125,12 @@ VOID SetTrayIconVisable(HWND hWnd, std::vector<char*>& tip_parts ,bool visable, 
 								nid.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP;
 								::Shell_NotifyIcon(NIM_DELETE, &nid);
 							}
-							::SendMessage(hWnd, TB_HIDEBUTTON, tbButton.idCommand, MAKELONG(!visable, 0)); // MAKELONG(true, 0) is hide, otherwise is show
+							::SendMessage(hWnd, TB_HIDEBUTTON, tbButton.idCommand, MAKELONG(!visible, 0)); // MAKELONG(true, 0) is hide, otherwise is show
 							::SendMessage(hWnd, TB_AUTOSIZE, 0, 0);
-							std::cout << "\t隐藏托盘图标：执行成功";
+							printf("\t%s托盘图标：执行成功", visible?"显示":"隐藏");
 						}
 					}
-					std::cout << "\tflags:" << flag1 <<" "<< flag2 << " " << flag3;
-
-					std::cout << std::endl;
+					printf("\n");
 				}
 				::VirtualFreeEx(hProcess, pTB, sizeof(TBBUTTON64), MEM_FREE);
 			}
@@ -130,6 +138,37 @@ VOID SetTrayIconVisable(HWND hWnd, std::vector<char*>& tip_parts ,bool visable, 
 		}
 	}
 }
+
+
+std::string ProcessIdToName(DWORD processId)
+{
+	std::string ret;
+	HANDLE handle = OpenProcess(
+		PROCESS_QUERY_LIMITED_INFORMATION,
+		FALSE,
+		processId /* This is the PID, you can find one from windows task manager */
+	);
+	if (handle)
+	{
+		DWORD buffSize = 1024;
+		CHAR buffer[1024];
+		if (QueryFullProcessImageNameA(handle, 0, buffer, &buffSize))
+		{
+			ret = buffer;
+		}
+		else
+		{
+			printf("Error GetModuleBaseNameA : %lu", GetLastError());
+		}
+		CloseHandle(handle);
+	}
+	else
+	{
+		printf("Error OpenProcess : %lu", GetLastError());
+	}
+	return ret;
+}
+
 
 
 bool contain(char *s, char *p) {
