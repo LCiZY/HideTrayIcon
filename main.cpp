@@ -1,19 +1,21 @@
 #include "util.h"
 
 
-#pragma comment( linker, "/subsystem:\"windows\" /entry:\"mainCRTStartup\"" )   // 隐藏控制台界面
+#pragma comment( linker, "/subsystem:\"windows\" /entry:\"mainCRTStartup\"" )   // 隐藏控制台界面 / hide console 
 
 
 std::vector<char*> tip_parts;
 
 
-/// argv: 1:延时delay  2:显示隐藏visible:hide/show  3:tooltip list...
+// argv: 1:延时delay  2:显示隐藏visible:hide/show  3:tooltip list...
 int main(int argc, char* argv[]) {
-	std::cout << "参数个数:"<<argc;
+	printf("来自命令行的参数的个数: %d", argc);
 	if (argc < 4) return -1;
 	//1.解析启动延时 / parse launch delay
-	int pre_time = parseInt(argv[1]); if (pre_time == -1) { std::cout << "参数错误 ";  return -1; }
-	std::cout << "\t延时:" << pre_time << "秒 "; Sleep(pre_time * 1000); 
+	int pre_time = parseInt(argv[1]); if (pre_time == -1) { printf("参数错误");  return -2; }
+	printf("\t延时: %d 秒启动", pre_time);
+	Sleep(pre_time * 1000);
+	
 	//2.解析此次操作是隐藏还是显示图标 / whether the operation is show or hide
 	bool visible = strcmp(argv[2], "show") == 0 ; // show or hide
 	//3.从启动参数中得到要处理的托盘含有的部分tooltip文字 / tooltips that split by space(could be not Integrity)
@@ -26,9 +28,9 @@ int main(int argc, char* argv[]) {
 }
 
 
-///////// ---for test---
+///////// ---for test---debug in vs---
 //int main() {
-//	bool visible = true;
+//	bool visible = false;
 //
 //	 char c[] = "ShareOnLan";
 //	 char c1[] = "Quick";
