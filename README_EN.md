@@ -18,13 +18,14 @@ hideTrayIcon.exe 5 show Text1 Text2  # show trayicon
 >
 > - **Text** can be part of the text contained in the tray tooltip, or it can be the process name, and multiple "Text" can be passed
 
-## 10 seconds execution delay after boot-up login
-STEP 1: Create a vbs file in the directory where hideTrayIcon.exe is located and enter the following code:
+## Execute the program after 10 seconds of power on
+**STEP 1**: Create a vbs file in the directory where hideTrayIcon.exe is located and enter the following code:
+
 ```
 Set ws = CreateObject("Wscript.Shell")
 ws.run "cmd /c hideTrayIcon.exe 10 hide Text", vbhide
 ```
-STEP 2: Replace **Text** with the part of tooltip or part of process path
+**STEP 2**: Replace **Text** with the part of tooltip or part of process path
 
 eg: For the Snipaste's tray icon show below, we can replace Text with *Snipaste 2.5.1* or *Beta* or *Snipaste .exe*
 
@@ -32,4 +33,4 @@ eg: For the Snipaste's tray icon show below, we can replace Text with *Snipaste 
 
 > Note: If there are non-ascii characters in the vbs script file (e.g. Chinese), you need to open the vbs file with Notepad and re-save it with ascii encoding.
 
-STEP 2: Put the shortcut to the vbs file in the C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Startup directory
+**STEP 3**: Put the shortcut to the vbs file in the `C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Startup` directory
