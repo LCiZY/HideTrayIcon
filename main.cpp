@@ -1,47 +1,88 @@
-#include "util.h"
-
+#include "tray_icon.h"
+#include "consts.h"
+#include "cmdline.h"
 
 #pragma comment( linker, "/subsystem:\"windows\" /entry:\"mainCRTStartup\"" )   // 隐藏控制台界面 / hide console 
 
+using namespace std;
 
-std::vector<char*> tip_parts;
-
-
-// argv: 1:延时delay  2:显示隐藏visible:hide/show  3:tooltip list...
 int main(int argc, char* argv[]) {
-	printf("来自命令行的参数的个数: %d", argc);
-	if (argc < 4) return -1;
-	//1.解析启动延时 / parse launch delay
-	int pre_time = parseInt(argv[1]); if (pre_time == -1) { printf("参数错误");  return -2; }
-	printf("\t延时: %d 秒启动", pre_time);
-	Sleep(pre_time * 1000);
+
+	///// cmdline https://github.com/tanakh/cmdline
+	cmdline::parser psr;
+	psr.add<string>("icon", 'i', "list of trayIcons, separated by space", true, "");
+	psr.add<int>("delay", 'd', "start-up delay", false, 0);
+	psr.add<string>("action", 'a', "show or hide", false, "hide", cmdline::oneof<string>("show", "hide"));
+	psr.add("recoverable", 'r', "whether the icon can be restored to display");
+	psr.add<string>("help", 'h', specification, false, "");
+
+	psr.parse_check(argc, argv);
+
+	string iconStr = psr.get<string>("icon");
+	string action = psr.get<string>("action");
+	int delay = psr.get<int>("delay");
+	bool recoverable = psr.exist("recoverable");
+
+	printf("\naction:[%s]\ndelay:[%d]\nrecoverable:[%s]\nicons: [%s]\n", action.c_str(), delay, recoverable ? "true" : "false", iconStr.c_str());
 	
-	//2.解析此次操作是隐藏还是显示图标 / whether the operation is show or hide
-	bool visible = strcmp(argv[2], "show") == 0 ; // show or hide
-	//3.从启动参数中得到要处理的托盘含有的部分tooltip文字 / tooltips that split by space(could be not Integrity)
-	for (int i = 3; i < argc; i++) { tip_parts.push_back(argv[i]); }
-	
-	SetTrayIconVisable(FindOverflowTrayWindow(), tip_parts, visible);
-	SetTrayIconVisable(FindNormalTrayWindow(),   tip_parts, visible, true);
+	if (iconStr == ""){
+		printf("\nerror: invalid argv --icon is empty");
+		return -1;
+	}
+
+	vector<string> sourceIcons = split(iconStr, ' ');
+	vector<string> icons;
+	for (int i = 0; i < sourceIcons.size(); i++)
+	{
+		string sourceIcon = sourceIcons.at(i);
+		string newIcon = sourceIcon;
+		trim(newIcon);
+		replaceAll(newIcon, "{dquotation}", "\"");
+		replaceAll(newIcon, "{squotation}", "'");
+		replaceAll(newIcon, "{space}", " ");
+		if (newIcon == "") continue;
+		icons.push_back(newIcon);
+
+		printf("\nicon:[%s]\tsource:[%s]", newIcon.c_str(), sourceIcon.c_str());
+	}
+
+	bool visible = action == "show";
+
+	printf("\ndelay %d seconds...", delay);
+	Sleep(delay * 1000);
+
+	printf("\nstart to execute...");
+
+	SetTrayIconVisable(FindOverflowTrayWindow(), icons, visible, !recoverable);
+	SetTrayIconVisable(FindNormalTrayWindow(), icons, visible, !recoverable);
+
+	printf("\ndone.");
 
 	return 0;
 }
 
 
-///////// ---for test---debug in vs---
+/////// ---for test---debug in vs---
 //int main() {
 //	bool visible = false;
 //
-//	 char c[] = "ShareOnLan";
-//	 char c1[] = "Quick";
-//	 char c2[] = "Ditto";
-//	 char c3[] = "uTools.exe";
-//	tip_parts.push_back(c);
-//	tip_parts.push_back(c1);
-//	tip_parts.push_back(c2);
-//	tip_parts.push_back(c3);
-//	SetTrayIconVisable(FindOverflowTrayWindow(), tip_parts, visible);
-//	SetTrayIconVisable(FindNormalTrayWindow(), tip_parts, visible, false);
+//	vector<string> icons;
+//	string c = "ShareOnLan";
+//	string c1 = "Quick";
+//	string c2 = "Ditto";
+//	string c3 = "uTools.exe";
+//	string c4 = "Everything";
+//	string c5 = "NVIDIA";
+//	icons.push_back(c);
+//	icons.push_back(c1);
+//	icons.push_back(c2);
+//	icons.push_back(c3);
+//	icons.push_back(c4);
+//	icons.push_back(c5);
+//
+//	SetTrayIconVisable(FindOverflowTrayWindow(), icons, visible, false); // set isHardDelete to true if you don't want to restore the icon
+//	SetTrayIconVisable(FindNormalTrayWindow(), icons, visible, true);
+//
 //	fflush(stdout);
 //	system("pause");
 //}

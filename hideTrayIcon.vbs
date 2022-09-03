@@ -1,2 +1,2 @@
 Set ws = CreateObject("Wscript.Shell")
-ws.run "cmd /c hideTrayIcon.exe 40 hide QuickLook Ditto Everything uTools.exe", vbhide
+ws.run "cmd /c hideTrayIcon.exe -a hide -d 1 -i ""QuickLook Ditto Everything uTools.exe""", vbhide
