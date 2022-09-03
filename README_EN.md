@@ -63,7 +63,8 @@ explanation:
 ```
 -a hide # hide the icon
 -d 10 # 10 seconds delay before executing the action
--i 'Everything NVIDIA uTools.exe'  # Indicates that the tray is to be hidden if the prompt text or the process name contains Everything or NVIDIA or uTools.exe
+-i ""Everything NVIDIA uTools.exe""  # Indicates that the tray is to be hidden if the prompt text or the process name contains Everything or NVIDIA or uTools.exe
+# in vbscript, " is represent by ""
 ```
 
 Replace **others** with the part of tooltip or part of process path of the trayIcon you want to hide

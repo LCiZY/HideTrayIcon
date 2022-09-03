@@ -65,7 +65,8 @@ ws.run "cmd /c hideTrayIcon.exe -a hide -d 10 -i ""Everything NVIDIA uTools.exe 
 ```shell
 -a hide # 表示隐藏操作
 -d 10 # 表示延时10s执行；
--i 'Everything NVIDIA uTools.exe 其他'  # 表示若托盘的提示文本中或进程名中含有Everything或NVIDIA或uTools.exe，则隐藏托盘
+-i "Everything NVIDIA uTools.exe 其他"  # 表示若托盘的提示文本中或进程名中含有Everything或NVIDIA或uTools.exe，则隐藏托盘
+# 在vb脚本里，"需要用""表示
 ```
 
 上述命令中的*其他*可以是**托盘tooltip含有的部分文字**或**进程名称**，如下图的火绒托盘，我们可以将 *其他* 替换为 “火绒安全” 或 “版本号” 或 "HipsTray.exe"（火绒托盘的进程名称）
