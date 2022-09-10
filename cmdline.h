@@ -1,4 +1,4 @@
-/*
+﻿/*
   Copyright (c) 2009, Hideyuki Tanaka
   All rights reserved.
 

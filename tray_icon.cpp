@@ -1,4 +1,4 @@
-#include"tray_icon.h"
+ï»¿#include"tray_icon.h"
 
 struct TBBUTTON64
 {
@@ -24,16 +24,16 @@ struct TRAYDATA
 	TCHAR szTip[128];
 };
 
-HWND FindOverflowTrayWindow() // Í¼±êÊÕÄÉÇøµÄ´°¿Ú¾ä±ú
+HWND FindOverflowTrayWindow() // å›¾æ ‡æ”¶çº³åŒºçš„çª—å£å¥æŸ„
 {
-	HWND hWnd = ::FindWindow(_T("NotifyIconOverflowWindow"), NULL);  // ²éÕÒNotifyIconOverflowWindow´°¿Ú
-	if (hWnd != NULL)    // ²éÕÒToobarWindow32´°¿Ú
+	HWND hWnd = ::FindWindow(_T("NotifyIconOverflowWindow"), NULL);  // æŸ¥æ‰¾NotifyIconOverflowWindowçª—å£
+	if (hWnd != NULL)    // æŸ¥æ‰¾ToobarWindow32çª—å£
 		hWnd = FindWindowEx(hWnd, NULL, _T("ToolbarWindow32"), NULL);
 
 	return hWnd;
 }
 
-HWND FindNormalTrayWindow()  //ÈÎÎñÀ¸µÄ´°¿Ú¾ä±ú
+HWND FindNormalTrayWindow()  //ä»»åŠ¡æ çš„çª—å£å¥æŸ„
 {
 	// find system tray window
 	HWND trayWnd = FindWindow(_T("Shell_TrayWnd"), NULL);
@@ -67,13 +67,14 @@ VOID SetTrayIconVisable(HWND hWnd, std::vector<std::string>& process_name_or_too
 	NOTIFYICONDATA nid;
 	TCHAR szSynTPEnhPath[MAX_PATH] = { 0 };
 
-	// ²éÑ¯Ö¸¶¨´°¿ÚËùº¬Í¼±êÊı£¬Ã¿¸öÍ¼±ê¶ÔÓ¦Ò»¸ö°´Å¥ // get the number of trayIcon in the window specified by hWnd
+
+	// æŸ¥è¯¢æŒ‡å®šçª—å£æ‰€å«å›¾æ ‡æ•°ï¼Œæ¯ä¸ªå›¾æ ‡å¯¹åº”ä¸€ä¸ªæŒ‰é’® // get the number of trayIcon in the window specified by hWnd
 	dwButtonCount = (DWORD)::SendMessage(hWnd, TB_BUTTONCOUNT, 0, 0);
 	printf("handle: %x, num_of_tray_icon: %d\n", hWnd, dwButtonCount);
 	if (dwButtonCount == 0)
 		return;
 
-	// »ñÈ¡´°¿ÚËùÔÚµÄ½ø³ÌID // get the processID to which the hWnd belongs
+	// è·å–çª—å£æ‰€åœ¨çš„è¿›ç¨‹ID // get the processID to which the hWnd belongs
 	if ((::GetWindowThreadProcessId(hWnd, &dwProcessID) != 0)
 		&& (dwProcessID != 0)) {
 		hProcess = ::OpenProcess(PROCESS_ALL_ACCESS | PROCESS_VM_OPERATION | PROCESS_VM_READ | PROCESS_VM_WRITE,
@@ -81,8 +82,8 @@ VOID SetTrayIconVisable(HWND hWnd, std::vector<std::string>& process_name_or_too
 		if (hProcess != NULL) {
 			pTB = ::VirtualAllocEx(hProcess, NULL, sizeof(TBBUTTON64), MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
 			if (pTB != NULL) {
-				// ±éÀúËùÓĞÍ¼±ê²¢Æ¥ÅäÄ¿±êĞÅÏ¢£¬´Ó¶øÕÒµ½Ä¿±êÍ¼±ê²¢·¢ËÍ ÏÔÊ¾/Òş²Ø ÏûÏ¢  // traverse all trayIcons to find the target and send msg to show/hide it
-				printf("¿ªÊ¼±éÀúËùÓĞÍ¼±ê(Begin traversal)\n");
+				// éå†æ‰€æœ‰å›¾æ ‡å¹¶åŒ¹é…ç›®æ ‡ä¿¡æ¯ï¼Œä»è€Œæ‰¾åˆ°ç›®æ ‡å›¾æ ‡å¹¶å‘é€ æ˜¾ç¤º/éšè— æ¶ˆæ¯  // traverse all trayIcons to find the target and send msg to show/hide it
+				printf("å¼€å§‹éå†æ‰€æœ‰å›¾æ ‡(Begin traversal)\n");
 				for (DWORD i = 0; i < dwButtonCount; i++) {
 
 					printf("\n--------------------\n ");
@@ -102,7 +103,7 @@ VOID SetTrayIconVisable(HWND hWnd, std::vector<std::string>& process_name_or_too
 
 						TCHAR szTips[1024];
 						::ReadProcessMemory(hProcess, (LPVOID)tbButton.iString, szTips, 1024, NULL);
-						//szTipsÊÇUnicode×Ö·û´®£¬ĞèÒª×ª»» // szTips is compose of unicode, convert to CString
+						//szTipsæ˜¯Unicodeå­—ç¬¦ä¸²ï¼Œéœ€è¦è½¬æ¢ // szTips is compose of unicode, convert to CString
 						USES_CONVERSION;
 						CString csTips = W2A((WCHAR*)(szTips));
 						std::string tip = csTips.GetBuffer(0);
@@ -122,26 +123,30 @@ VOID SetTrayIconVisable(HWND hWnd, std::vector<std::string>& process_name_or_too
 							}
 						}
 
-						// Èç¹û ÍĞÅÌÍ¼±êµÄszTip »ò ÍĞÅÌÍ¼±êËùÊô½ø³ÌÃû °üº¬ÌØ¶¨µÄĞÅÏ¢£¬¸ÃÍ¼±ê¾ÍÊÇÎÒÃÇ×¼±¸Çå³ıµÄÍ¼±ê£¬ÕÒµ½²¢ É¾³ı/Òş²Ø Ëü 
+						// å¦‚æœ æ‰˜ç›˜å›¾æ ‡çš„szTip æˆ– æ‰˜ç›˜å›¾æ ‡æ‰€å±è¿›ç¨‹å åŒ…å«ç‰¹å®šçš„ä¿¡æ¯ï¼Œè¯¥å›¾æ ‡å°±æ˜¯æˆ‘ä»¬å‡†å¤‡æ¸…é™¤çš„å›¾æ ‡ï¼Œæ‰¾åˆ°å¹¶ åˆ é™¤/éšè— å®ƒ 
 						// if there is user specified msg contained in the tooltip of trayIcon and process path, then the trayIcon is a target
 						printf("\nis target: %s", existFlag ? "true" : "false");
 						if (existFlag) {
-							if (isHardDelete && !visible) { //Ó²É¾³ı£¬²»¿É»Ö¸´ // hard delete action, can not recover it
+							bool executeResult;
+							if (isHardDelete && !visible) { //ç¡¬åˆ é™¤ï¼Œä¸å¯æ¢å¤ // hard delete action, can not recover it
+								// for taskbar's icon
 								nid.cbSize = NOTIFYICONDATA_V2_SIZE;
 								nid.uID = td.uID;
 								nid.hWnd = td.hWnd;
 								nid.hIcon = td.hIcon;
 								nid.uCallbackMessage = td.uCallbackMessage;
 								nid.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP;
-								::Shell_NotifyIcon(NIM_DELETE, &nid);
+								executeResult = ::Shell_NotifyIcon(NIM_DELETE, &nid);
+								// for overflow area
+								::SendMessage(hWnd, TB_DELETEBUTTON, i, 0);
+							} else {
+								executeResult = ::SendMessage(hWnd, TB_HIDEBUTTON, tbButton.idCommand, MAKELONG(!visible, 0)); // MAKELONG(true, 0) is hide, otherwise is show
 							}
 							// send msg to hWnd
-							::SendMessage(hWnd, TB_HIDEBUTTON, tbButton.idCommand, MAKELONG(!visible, 0)); // MAKELONG(true, 0) is hide, otherwise is show
 							::SendMessage(hWnd, TB_AUTOSIZE, 0, 0);
-							printf(",\t%s trayIcon: success", visible ? "show" : "hide");
+							printf(",\t%s trayIcon: %s", visible ? "show" : "hide", executeResult ? "succeed" : "failed");
 						}
-					}
-					else {
+					} else {
 						printf("\n Read trayIcon info failed!!! \n");
 					}
 					printf("\n");

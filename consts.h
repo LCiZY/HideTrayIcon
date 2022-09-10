@@ -1,18 +1,18 @@
-#pragma once
+ï»¿#pragma once
 #include<string>
 
 
 std::string specification = "\n\
 -d --delay\n\
-	start-up delay in seconds Æô¶¯ÑÓÊ±£¨Ãë£©\n\
+	start-up delay in seconds å¯åŠ¨å»¶æ—¶ï¼ˆç§’ï¼‰\n\
 	default: 0\n\
 -r --recoverable\n\
-	whether the icon can be restored to display Í¼±êÊÇ·ñ¿ÉÒÔ»Ö¸´ÏÔÊ¾\n\
+	whether the icon can be restored to display å›¾æ ‡æ˜¯å¦å¯ä»¥æ¢å¤æ˜¾ç¤º\n\
 -a --action\n\
-	show or hide, show only works if - r or --recoverable is passed to program when the program is run for the first time ½öµ±µÚÒ»´ÎÔËĞĞ±¾³ÌĞòÊ±£¬¸ø--recoverable´«µİtrue£¬showÕâ¸öÑ¡Ïî²ÅÉúĞ§\n\
+	show or hide, show only works if - r or --recoverable is passed to program when the program is run for the first time ä»…å½“ç¬¬ä¸€æ¬¡è¿è¡Œæœ¬ç¨‹åºæ—¶ï¼Œç»™--recoverableä¼ é€’trueï¼Œshowè¿™ä¸ªé€‰é¡¹æ‰ç”Ÿæ•ˆ\n\
 	default: hide\n\
 -i --icon\n\
-	list of trayIcons, can be tooltip and processName, separated by space Í¼±êÁĞ±í£¬¿ÉÒÔÊÇÍĞÅÌÌáÊ¾ÎÄ±¾ºÍ½ø³ÌÃû³Æ£¬ÓÉ¿Õ¸ñ·Ö¸î\n\
+	list of trayIcons, can be tooltip and processName, separated by space å›¾æ ‡åˆ—è¡¨ï¼Œå¯ä»¥æ˜¯æ‰˜ç›˜æç¤ºæ–‡æœ¬å’Œè¿›ç¨‹åç§°ï¼Œç”±ç©ºæ ¼åˆ†å‰²\n\
 	eg. -i 'Everything NVIDIA uTools.exe'\n\
 	eg. -i 'Goland{space}2021.1.3' # \"Goland 2021.1.3\" contain space\n\
 	eg. -i 'Carl{squotation}s{space}cat' # \"Carl's cat\" contain single quotation mark and space\n\

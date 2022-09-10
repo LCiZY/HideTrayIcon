@@ -1,8 +1,9 @@
-#include "tray_icon.h"
+ï»¿#include "tray_icon.h"
 #include "consts.h"
 #include "cmdline.h"
 
-#pragma comment( linker, "/subsystem:\"windows\" /entry:\"mainCRTStartup\"" )   // Òş²Ø¿ØÖÆÌ¨½çÃæ / hide console 
+#pragma comment( linker, "/subsystem:\"windows\" /entry:\"mainCRTStartup\"" )   // éšè—æ§åˆ¶å°ç•Œé¢ / hide console 
+
 
 using namespace std;
 
@@ -62,7 +63,7 @@ int main(int argc, char* argv[]) {
 }
 
 
-/////// ---for test---debug in vs---
+///// ---for test---debug in vs---
 //int main() {
 //	bool visible = false;
 //
@@ -80,7 +81,7 @@ int main(int argc, char* argv[]) {
 //	icons.push_back(c4);
 //	icons.push_back(c5);
 //
-//	SetTrayIconVisable(FindOverflowTrayWindow(), icons, visible, false); // set isHardDelete to true if you don't want to restore the icon
+//	SetTrayIconVisable(FindOverflowTrayWindow(), icons, visible, true); // set isHardDelete to true if you don't want to restore the icon
 //	SetTrayIconVisable(FindNormalTrayWindow(), icons, visible, true);
 //
 //	fflush(stdout);

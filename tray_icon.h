@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include <atlbase.h>
 #include <atlconv.h>
@@ -11,19 +11,20 @@
 
 #include "util.h"
 
-// ¸ù¾İ½ø³ÌIDµÃµ½½ø³ÌÃû³Æ / get process name by process ID
+// æ ¹æ®è¿›ç¨‹IDå¾—åˆ°è¿›ç¨‹åç§° / get process name by process ID
 std::string ProcessIdToName(DWORD processId);
 // get error string
 std::string GetLastErrorAsString();
 
-// µÃµ½ÍĞÅÌ´°¿Ú¾ä±ú£¬ÍØÕ¹µÄÍĞÅÌ´°¿Ú¾ä±ú / get the handle of expanded trayIcon window
+// å¾—åˆ°æ‰˜ç›˜çª—å£å¥æŸ„ï¼Œæ‹“å±•çš„æ‰˜ç›˜çª—å£å¥æŸ„ / get the handle of expanded trayIcon window
 HWND FindOverflowTrayWindow();
-// µÃµ½ÍĞÅÌ´°¿Ú¾ä±ú£¬ÈÎÎñÀ¸µÄÍĞÅÌ´°¿Ú¾ä±ú / get the handle of taskbar's trayIcon window
+// å¾—åˆ°æ‰˜ç›˜çª—å£å¥æŸ„ï¼Œä»»åŠ¡æ çš„æ‰˜ç›˜çª—å£å¥æŸ„ / get the handle of taskbar's trayIcon window
 HWND FindNormalTrayWindow();
 
-// ÉèÖÃÈÎÎñÀ¸ÖĞÍ¼±êµÄ¿É¼û×´Ì¬ / set the visibility of trayIcons in taskBar and overflow area
-// @param hWnd: Í¼±êËùÔÚ´°¿ÚµÄ¾ä±ú / the handle of window where the trayIcon is located
-// @param process_name_or_tooltips: Õâ¸övectorµÄÔªËØ¿ÉÒÔÊÇ½ø³ÌÃû»òÍĞÅÌÌáÊ¾µÄ×Ó×Ö·û´® / the element of the vector could be a subString of process name or subString of trayIcon's tooltip
-// @param visible: trueÊÇÏÔÊ¾£¬falseÊÇÒş²Ø / true: show, false: hide
-// @param isHardDelete: Ó²É¾³ı£¬½öÔÚvisibleÎªfalseÊ±ÉúĞ§ / hard delete the trayIcon, only take effect when visible = false
+// è®¾ç½®ä»»åŠ¡æ ä¸­å›¾æ ‡çš„å¯è§çŠ¶æ€ / set the visibility of trayIcons in taskBar and overflow area
+// @param hWnd: å›¾æ ‡æ‰€åœ¨çª—å£çš„å¥æŸ„ / the handle of window where the trayIcon is located
+// @param process_name_or_tooltips: è¿™ä¸ªvectorçš„å…ƒç´ å¯ä»¥æ˜¯è¿›ç¨‹åæˆ–æ‰˜ç›˜æç¤ºçš„å­å­—ç¬¦ä¸² / the element of the vector could be a subString of process name or subString of trayIcon's tooltip
+// @param visible: trueæ˜¯æ˜¾ç¤ºï¼Œfalseæ˜¯éšè— / true: show, false: hide
+// @param isHardDelete: ç¡¬åˆ é™¤ï¼Œä»…åœ¨visibleä¸ºfalseæ—¶ç”Ÿæ•ˆ / hard delete the trayIcon, only take effect when visible = false
 VOID SetTrayIconVisable(HWND hWnd, std::vector<std::string>& process_name_or_tooltips, bool visible, bool isHardDelete = true);
+

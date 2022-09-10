@@ -1,4 +1,4 @@
-#include"util.h"
+﻿#include"util.h"
 
 bool contain(const char *s, const char *p) {
 	int len1 = strlen(s);
