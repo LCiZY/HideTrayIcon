@@ -54,8 +54,8 @@ int main(int argc, char* argv[]) {
 
 	printf("\nstart to execute...");
 
-	SetTrayIconVisable(FindOverflowTrayWindow(), icons, visible, !recoverable);
-	SetTrayIconVisable(FindNormalTrayWindow(), icons, visible, !recoverable);
+	SetTrayIconVisable(FindOverflowTrayWindow(), ICON_AREA::AREA_OVERFLOW, icons, visible, !recoverable);
+	SetTrayIconVisable(FindNormalTrayWindow(),  ICON_AREA::AREA_TASKBAR, icons, visible, !recoverable);
 
 	printf("\ndone.");
 
@@ -63,26 +63,28 @@ int main(int argc, char* argv[]) {
 }
 
 
-///// ---for test---debug in vs---
+/// ---for test---debug in vs---
 //int main() {
 //	bool visible = false;
 //
 //	vector<string> icons;
-//	string c = "ShareOnLan";
 //	string c1 = "Quick";
 //	string c2 = "Ditto";
 //	string c3 = "uTools.exe";
 //	string c4 = "Everything";
 //	string c5 = "NVIDIA";
-//	icons.push_back(c);
+//	string c6 = "AMD";
+//	string c7 = "ShareOnLan";
 //	icons.push_back(c1);
 //	icons.push_back(c2);
 //	icons.push_back(c3);
 //	icons.push_back(c4);
 //	icons.push_back(c5);
+//	icons.push_back(c6);
+//	icons.push_back(c7);
 //
-//	SetTrayIconVisable(FindOverflowTrayWindow(), icons, visible, true); // set isHardDelete to true if you don't want to restore the icon
-//	SetTrayIconVisable(FindNormalTrayWindow(), icons, visible, true);
+//	SetTrayIconVisable(FindOverflowTrayWindow(), ICON_AREA::AREA_OVERFLOW, icons, visible, true); // set isHardDelete to true if you don't want to restore the icon
+//	SetTrayIconVisable(FindNormalTrayWindow(), ICON_AREA::AREA_TASKBAR, icons, visible, true);
 //
 //	fflush(stdout);
 //	system("pause");

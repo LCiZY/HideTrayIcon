@@ -38,6 +38,7 @@ hideTrayIcon.exe -i 'Everything NVIDIA uTools.exe' [其他选项]
 	default: hide
 -i --icon
 	图标列表，可以是托盘提示文本和进程名称，由空格分割
+	eg. -i Everything
 	eg. -i 'Everything NVIDIA uTools.exe'
 	eg. -i 'Goland{space}2021.1.3' # \"Goland 2021.1.3\" 里包含空格，使用{space}占位符
 	eg. -i 'Carl{squotation}s{space}cat' # \"Carl's cat\" 包含'，使用占位符{squotation}
