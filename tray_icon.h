@@ -11,6 +11,12 @@
 
 #include "util.h"
 
+enum ICON_AREA
+{
+	AREA_TASKBAR = 1,
+	AREA_OVERFLOW = 2,
+};
+
 // 根据进程ID得到进程名称 / get process name by process ID
 std::string ProcessIdToName(DWORD processId);
 // get error string
@@ -26,5 +32,5 @@ HWND FindNormalTrayWindow();
 // @param process_name_or_tooltips: 这个vector的元素可以是进程名或托盘提示的子字符串 / the element of the vector could be a subString of process name or subString of trayIcon's tooltip
 // @param visible: true是显示，false是隐藏 / true: show, false: hide
 // @param isHardDelete: 硬删除，仅在visible为false时生效 / hard delete the trayIcon, only take effect when visible = false
-VOID SetTrayIconVisable(HWND hWnd, std::vector<std::string>& process_name_or_tooltips, bool visible, bool isHardDelete = true);
+VOID SetTrayIconVisable(HWND hWnd, const ICON_AREA area_type, std::vector<std::string>& process_name_or_tooltips, bool visible, bool isHardDelete = true);
 

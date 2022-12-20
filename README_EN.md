@@ -39,6 +39,7 @@ hideTrayIcon.exe -i 'Everything NVIDIA uTools.exe' [options]
 	default: hide
 -i --icon
 	list of trayIcons, can be tooltip and processName, separated by space
+	eg. -i Everything
 	eg. -i 'Everything NVIDIA uTools.exe'
 	eg. -i 'Goland{space}2021.1.3' # \"Goland 2021.1.3\" contain space
 	eg. -i 'Carl{squotation}s{space}cat' # \"Carl's cat\" contain single quotation mark and space

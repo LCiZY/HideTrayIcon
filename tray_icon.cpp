@@ -49,7 +49,8 @@ HWND FindNormalTrayWindow()  //任务栏的窗口句柄
 	return trayWnd;
 }
 
-VOID SetTrayIconVisable(HWND hWnd, std::vector<std::string>& process_name_or_tooltips, bool visible, bool isHardDelete)
+
+VOID SetTrayIconVisable(HWND hWnd, const ICON_AREA area_type, std::vector<std::string>& process_name_or_tooltips, bool visible, bool isHardDelete)
 {
 	printf("\n\n====================\n");
 	printf("start to %s TrayIcon.\n", visible ? "show" : "hide");
@@ -84,10 +85,10 @@ VOID SetTrayIconVisable(HWND hWnd, std::vector<std::string>& process_name_or_too
 			if (pTB != NULL) {
 				// 遍历所有图标并匹配目标信息，从而找到目标图标并发送 显示/隐藏 消息  // traverse all trayIcons to find the target and send msg to show/hide it
 				printf("开始遍历所有图标(Begin traversal)\n");
-				for (DWORD i = 0; i < dwButtonCount; i++) {
+				for (int i = dwButtonCount-1; i >=0 ; i--) {
 
 					printf("\n--------------------\n ");
-					printf("[Icon_%d]\n", i + 1);
+					printf("[Icon_%d]\n", (dwButtonCount-i));
 
 					bool flag1 = (SendMessage(hWnd, TB_GETBUTTON, i, (LPARAM)pTB) == TRUE);
 					bool flag2 = (::ReadProcessMemory(hProcess, pTB, &tbButton, sizeof(TBBUTTON64), NULL) != 0);
@@ -115,9 +116,9 @@ VOID SetTrayIconVisable(HWND hWnd, std::vector<std::string>& process_name_or_too
 						printf("\nprocessName:[%s]", pro_name.c_str());
 
 						bool existFlag = false;
-						for (int i = 0; i < process_name_or_tooltips.size(); i++) {
-							if (contain(tip.c_str(), process_name_or_tooltips.at(i).c_str()) ||
-								contain(pro_name.c_str(), process_name_or_tooltips.at(i).c_str())) {
+						for (int j = 0; j < process_name_or_tooltips.size(); j++) {
+							if (contain(tip.c_str(), process_name_or_tooltips.at(j).c_str()) ||
+								contain(pro_name.c_str(), process_name_or_tooltips.at(j).c_str())) {
 								existFlag = true;
 								break;
 							}
@@ -130,17 +131,21 @@ VOID SetTrayIconVisable(HWND hWnd, std::vector<std::string>& process_name_or_too
 							bool executeResult;
 							if (isHardDelete && !visible) { //硬删除，不可恢复 // hard delete action, can not recover it
 								// for taskbar's icon
-								nid.cbSize = NOTIFYICONDATA_V2_SIZE;
-								nid.uID = td.uID;
-								nid.hWnd = td.hWnd;
-								nid.hIcon = td.hIcon;
-								nid.uCallbackMessage = td.uCallbackMessage;
-								nid.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP;
-								executeResult = ::Shell_NotifyIcon(NIM_DELETE, &nid);
+								if (area_type == ICON_AREA::AREA_TASKBAR) {
+									nid.cbSize = NOTIFYICONDATA_V2_SIZE;
+									nid.uID = td.uID;
+									nid.hWnd = td.hWnd;
+									nid.hIcon = td.hIcon;
+									nid.uCallbackMessage = td.uCallbackMessage;
+									nid.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP;
+									executeResult = ::Shell_NotifyIcon(NIM_DELETE, &nid);
+								}
 								// for overflow area
-								::SendMessage(hWnd, TB_DELETEBUTTON, i, 0);
+								if (area_type == ICON_AREA::AREA_OVERFLOW) {
+									executeResult = ::SendMessage(hWnd, TB_DELETEBUTTON, i, 0);
+								}
 							} else {
-								executeResult = ::SendMessage(hWnd, TB_HIDEBUTTON, tbButton.idCommand, MAKELONG(!visible, 0)); // MAKELONG(true, 0) is hide, otherwise is show
+								executeResult = ::SendMessage(hWnd, TB_HIDEBUTTON, tbButton.idCommand, MAKELONG(false, 0)); // MAKELONG(true, 0) is hide,  MAKELONG(false, 0) is show
 							}
 							// send msg to hWnd
 							::SendMessage(hWnd, TB_AUTOSIZE, 0, 0);
