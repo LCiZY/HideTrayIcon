@@ -2,7 +2,7 @@
 
 # HideTrayIcon
 
-Hide/Show TrayIcon for 64bit Windows.
+Hide/Show TrayIcon for 64bit Windows 10.
 
 # Function
 
