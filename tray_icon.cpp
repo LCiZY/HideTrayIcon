@@ -145,7 +145,7 @@ VOID SetTrayIconVisable(HWND hWnd, const ICON_AREA area_type, std::vector<std::s
 									executeResult = ::SendMessage(hWnd, TB_DELETEBUTTON, i, 0);
 								}
 							} else {
-								executeResult = ::SendMessage(hWnd, TB_HIDEBUTTON, tbButton.idCommand, MAKELONG(false, 0)); // MAKELONG(true, 0) is hide,  MAKELONG(false, 0) is show
+								executeResult = ::SendMessage(hWnd, TB_HIDEBUTTON, tbButton.idCommand, MAKELONG(!visible, 0)); // MAKELONG(true, 0) is hide,  MAKELONG(false, 0) is show
 							}
 							// send msg to hWnd
 							::SendMessage(hWnd, TB_AUTOSIZE, 0, 0);
