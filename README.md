@@ -2,7 +2,7 @@
 
 # HideTrayIcon
 
-Hide/Show TrayIcon for 64bit Windows 10.
+Hide TrayIcon for 64bit Windows 10.
 
 ---
 
@@ -31,8 +31,8 @@ hideTrayIcon.exe -i 'Everything NVIDIA uTools.exe' [其他选项]
 -d --delay
 	启动延时，单位秒
 	default: 0
--r --recoverable
-	图标是否可以恢复显示
+-r --recoverable（可能无效）
+	图标是否可以恢复显示，实验性功能，目前仅支持恢复图标溢出区域的图标
 -a --action
 	show 或 hide, 仅当系统启动后第一次运行本程序时，给--recoverable传递了true，show这个选项才生效
 	default: hide

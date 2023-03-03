@@ -32,8 +32,8 @@ hideTrayIcon.exe -i 'Everything NVIDIA uTools.exe' [options]
 -d --delay
 	start-up delay in seconds
 	default: 0
--r --recoverable
-	whether the icon can be restored to display
+-r --recoverable (may not work)
+	whether the icon can be restored to display, this is a experimental feature, only icons in overflow area can be recovered
 -a --action
 	show or hide, show only works if - r or --recoverable is passed to program when the program is run for the first time
 	default: hide
